@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-const page: React.FC = () => {
+const Page: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -50,7 +50,7 @@ const page: React.FC = () => {
     }, []);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%',marginTop:'40px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', marginTop: '40px' }}>
             <div style={{ position: 'absolute', marginLeft: '40px', width: '600px', height: '350px', left: 0, background: '#fff', border: '1px solid #ccc', overflow: 'hidden' }}>
                 <div id="map" ref={mapContainerRef} style={{ width: '100%', height: '100%' }}></div>
             </div>
@@ -59,4 +59,5 @@ const page: React.FC = () => {
     );
 };
 
-export default page;
+export default Page;
+S
