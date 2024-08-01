@@ -1,11 +1,13 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
+import axios from 'axios';
 import L from 'leaflet';
 
 const Page: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
+    const [imageUrl, setImageUrl] = useState('');
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -52,12 +54,27 @@ const Page: React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/data', { responseType: 'blob' })
+            .then(response => {
+                const imageUrl = URL.createObjectURL(response.data);
+                setImageUrl(imageUrl);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setImageUrl('');
+            });
+    }, []);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', marginTop: '40px' }}>
-            <div style={{ position: 'absolute', marginLeft: '40px', width: '600px', height: '350px', left: 0, background: '#fff', border: '1px solid #ccc', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', marginLeft: '40px', width: '600px', height: '350px', background: '#fff', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md'>
                 <div id="map" ref={mapContainerRef} style={{ width: '100%', height: '100%' }}></div>
             </div>
-            <div style={{ position: 'relative', width: '100px', height: '100px', flex: 1 }}></div>
+            <div style={{ position: 'relative', marginLeft: '20px', width: '600px', height: '350px', background: '#f0f0f0', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md'>
+                <h3 className='text-sm text-center'>Property Rates Graph</h3>
+                {imageUrl ? <img src={imageUrl} alt="Property Rates Graph" style={{ width: '100%', height: '100%' }} /> : <p>Loading...</p>}
+            </div>
         </div>
     );
 };

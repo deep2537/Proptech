@@ -10,7 +10,7 @@ const Navbar = () => {
                 <Link href='deep'><Image src={Logo} alt='Logo' height="50" width="120" className='rounded-md cursor-pointer' priority/></Link>
                 <div className='flex justify-around w-full'>
                     <Link href="/">Home</Link>
-                    <Link href="/">About</Link>
+                    <Link href="/Integrate">About</Link>
                     <Link href="/">Clients</Link>
                     <Link href="/">Contact Us</Link>
                 </div>
