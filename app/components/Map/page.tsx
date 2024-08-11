@@ -1,14 +1,16 @@
-// pages/index.tsx
-'use client';
-import React from 'react';
-import MapComponent from './MapComponent';
+// pages/map.tsx or your relevant page file
+import dynamic from 'next/dynamic';
 
-const Home = () => {
+// Dynamically import the MapComponent with SSR disabled
+const MapComponent = dynamic(() => import('../Map/MapComponent'), { ssr: false });
+
+const Page: React.FC = () => {
   return (
-    <div style={{ height: '100vh' }}>
+    <div>
       <MapComponent />
     </div>
   );
 };
 
-export default Home;
+export default Page;
+
