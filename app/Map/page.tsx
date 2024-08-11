@@ -3,12 +3,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import L from 'leaflet';
-
+import Graph from '../components/Graph/Graph';
+import Graph1 from '../components/Graph/Graph1'
+import Predict from '../components/Predict/Predict';
 const Page: React.FC = () => {
     const mapRef = useRef<L.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const [imageUrl, setImageUrl] = useState('');
-
+    const [imageUrl1, setImageUrl1] = useState('');
     useEffect(() => {
         if (typeof window !== 'undefined') {
             import('leaflet').then((L) => {
@@ -32,6 +34,7 @@ const Page: React.FC = () => {
                     }).addTo(map);
 
                     const selectedBounds = JSON.parse(localStorage.getItem('selectedBounds') || 'null');
+                    console.log(selectedBounds)
                     if (selectedBounds) {
                         const bounds = L.latLngBounds(
                             [selectedBounds[0][0], selectedBounds[0][1]],
@@ -55,7 +58,7 @@ const Page: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/data', { responseType: 'blob' })
+        axios.get('http://127.0.0.1:8000/api/data/', { responseType: 'blob' })
             .then(response => {
                 const imageUrl = URL.createObjectURL(response.data);
                 setImageUrl(imageUrl);
@@ -65,17 +68,42 @@ const Page: React.FC = () => {
                 setImageUrl('');
             });
     }, []);
-
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/graph', { responseType: 'blob' })
+            .then(response => {
+                const imageUrl1 = URL.createObjectURL(response.data);
+                setImageUrl1(imageUrl1);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setImageUrl1('');
+            });
+    }, []);
     return (
-        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', marginTop: '40px' }}>
-            <div style={{ position: 'relative', marginLeft: '40px', width: '600px', height: '350px', background: '#fff', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md'>
+        <>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%', marginTop: '40px',gap:"40px" }}>
+            <div style={{ position: 'relative', marginLeft: '40px', width: '600px', height: '350px', background: '#fff', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md '>
                 <div id="map" ref={mapContainerRef} style={{ width: '100%', height: '100%' }}></div>
             </div>
-            <div style={{ position: 'relative', marginLeft: '20px', width: '600px', height: '350px', background: '#f0f0f0', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md'>
+            <div style={{ position: 'relative', marginLeft: '20px', width: '750px', height: '350px', background: '#f0f0f0', border: '1px solid #ccc', overflow: 'hidden' }} className='rounded-md'>
                 <h3 className='text-sm text-center'>Property Rates Graph</h3>
                 {imageUrl ? <img src={imageUrl} alt="Property Rates Graph" style={{ width: '100%', height: '100%' }} /> : <p>Loading...</p>}
             </div>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '40px' }}>
+             <div style={{ width: '100%', height: '100%',marginTop: 10 }}>
+
+                 <div className='flex flex-row gap-0'>
+                    <Graph1/>
+                    <Graph/>
+                 </div>
+
+             </div>
+         </div>
+         <div>
+         <Predict/>
+         </div>
+        </>
     );
 };
 
