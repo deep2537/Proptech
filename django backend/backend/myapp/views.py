@@ -111,5 +111,37 @@ def predict_text(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+# views.py
+from django.http import JsonResponse
+import googlemaps
+
+# Initialize the Google Maps client with your API key
+API_KEY = 'AIzaSyDWPGb_VYQJIskpHBYZz57Gw2RXJFZLgi4'
+gmaps = googlemaps.Client(key=API_KEY)
+
+def find_substations(request):
+    ne_lat = float(request.GET.get('neLat'))
+    ne_lng = float(request.GET.get('neLng'))
+    sw_lat = float(request.GET.get('swLat'))
+    sw_lng = float(request.GET.get('swLng'))
+
+    # Example search query for substations
+    places_result = gmaps.places_nearby(
+        location=(ne_lat, ne_lng),
+        radius=10000,  # Adjust radius as needed
+        keyword='substation'
+    )
+    
+    substations = []
+    for place in places_result.get('results', []):
+        if sw_lat <= place['geometry']['location']['lat'] <= ne_lat and sw_lng <= place['geometry']['location']['lng'] <= ne_lng:
+            substations.append({
+                'name': place.get('name'),
+                'address': place.get('vicinity'),
+                'lat': place['geometry']['location']['lat'],
+                'lng': place['geometry']['location']['lng']
+            })
+
+    return JsonResponse(substations, safe=False)
 
 
